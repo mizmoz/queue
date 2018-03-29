@@ -1,0 +1,41 @@
+{
+  "name": "mizmoz/queue",
+  "description": "Mizmoz Queue Library",
+  "website": "https://www.mizmoz.com/",
+  "type": "library",
+  "version": "0.1.0",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Support",
+      "email": "support@mizmoz.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Mizmoz\\Queue\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Mizmoz\\Queue\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": ">=7.1",
+    "mizmoz/container": "^1.3",
+    "symfony/process": "^3.3"
+  },
+  "require-dev": {
+    "mockery/mockery": "^0.9.9",
+    "pda/pheanstalk": "^3.1",
+    "phpunit/phpunit": "^6.2",
+    "symfony/console": "^3.3"
+  },
+  "suggest": {
+    "mizmoz/app": "Required for app registration",
+    "pda/pheanstalk": "Required when using Beanstalkd Queue",
+    "symfony/console": "Required for running the queue listener command",
+    "symfony/process": "Required for running the queue listener command"
+  }
+}
