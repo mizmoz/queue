@@ -6,6 +6,8 @@ interface PayloadInterface
 {
     /**
      * Execute the payload
+     *
+     * @return mixed
      */
-    public function execute();
+    public function execute(): mixed;
 }

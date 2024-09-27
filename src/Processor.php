@@ -99,17 +99,19 @@ class Processor
     /**
      * Register the signal handlers
      */
-    private function registerSigHandlers()
+    private function registerSigHandlers(): void
     {
         declare(ticks = 1);
 
-        pcntl_signal(SIGINT, function () {
-            $this->running = false;
-        });
+        if (function_exists('pcntl_signal')) {
+            pcntl_signal(SIGINT, function () {
+                $this->running = false;
+            });
 
-        pcntl_signal(SIGTERM, function () {
-            $this->running = false;
-        });
+            pcntl_signal(SIGTERM, function () {
+                $this->running = false;
+            });
+        }
     }
 
     /**
@@ -173,7 +175,7 @@ class Processor
             }
 
             try {
-                if ((php_sapi_name() === 'cli')) {
+                if (php_sapi_name() === 'cli') {
                     echo 'Processing job: ' . get_class($job->getPayload()) . PHP_EOL;
                 }
 

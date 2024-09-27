@@ -18,17 +18,17 @@ class Manager
     /**
      * @var ContainerInterface
      */
-    private $container;
+    private ContainerInterface $container;
 
     /**
      * @var QueueInterface[]
      */
-    private $queues = [];
+    private array $queues = [];
 
     /**
      * @var HandleFailedJobInterface[]
      */
-    private $failedJobHandlers = [];
+    private array $failedJobHandlers = [];
 
     /**
      * Manager constructor.
@@ -124,7 +124,7 @@ class Manager
         int $maxMemory = QueueProcessInterface::DEFAULT_MAX_MEMORY,
         int $waitInterval = QueueProcessInterface::DEFAULT_WAIT_INTERVAL,
         int $maxJobs = 0
-    ) {
+    ): void {
         $queue = $this->getQueue($name);
         $processor = new Processor($queue, $maxAttempts, $maxMemory, $waitInterval, $maxJobs);
         $this->processHandler($processor);
@@ -136,7 +136,7 @@ class Manager
      * @param string $name
      * @param int $maxAttempts
      */
-    public function processOne(string $name, int $maxAttempts = QueueProcessInterface::DEFAULT_MAX_ATTEMPTS)
+    public function processOne(string $name, int $maxAttempts = QueueProcessInterface::DEFAULT_MAX_ATTEMPTS): void
     {
         $queue = $this->getQueue($name);
         $processor = new Processor($queue, $maxAttempts);
@@ -147,7 +147,7 @@ class Manager
      * @param Processor $processor
      * @param bool $justOne
      */
-    private function processHandler(Processor $processor, bool $justOne = false)
+    private function processHandler(Processor $processor, bool $justOne = false): void
     {
         // set the app container
         $processor->setAppContainer($this->container);

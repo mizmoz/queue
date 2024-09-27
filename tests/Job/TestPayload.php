@@ -9,7 +9,7 @@ class TestPayload implements PayloadInterface
     /**
      * @var int
      */
-    private $number;
+    public int $number;
 
     /**
      * Init with the number
@@ -24,7 +24,7 @@ class TestPayload implements PayloadInterface
     /**
      * @inheritDoc
      */
-    public function execute()
+    public function execute(): int
     {
         // very important job to execute...
         return $this->number * 100;

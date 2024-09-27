@@ -8,19 +8,5 @@ trait JobAccessorTrait
 {
     private $jobInstance;
 
-    /**
-     * @inheritdoc
-     */
-    public function getJob(): JobInterface
-    {
-        return $this->jobInstance;
-    }
 
-    /**
-     * @inheritdoc
-     */
-    public function setJob(JobInterface $job)
-    {
-        $this->jobInstance = $job;
-    }
 }

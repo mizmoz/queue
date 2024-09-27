@@ -19,7 +19,7 @@ class JobTest extends TestCase
         $this->assertEquals($payload, $job->getPayload());
 
         // check we create a message
-        $this->assertInternalType('string', $job->getMessage());
+        $this->assertIsString($job->getMessage());
     }
 
     public function testJobInstantiation()
@@ -36,7 +36,7 @@ class JobTest extends TestCase
         $message = $job->getMessage();
 
         // make sure we get a string
-        $this->assertInternalType('string', $message);
+        $this->assertIsString($message);
 
         // now set the message
         $this->assertTrue($job->setMessage($message));

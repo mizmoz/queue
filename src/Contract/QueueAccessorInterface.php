@@ -7,14 +7,14 @@ interface QueueAccessorInterface
     /**
      * Get the queue
      *
-     * @return QueueInterface
+     * @return QueueInterface|null
      */
-    public function getQueue(): QueueInterface;
+    public function getQueue(): ?QueueInterface;
 
     /**
      * Set the queue
      *
      * @param QueueInterface $queue
      */
-    public function setQueue(QueueInterface $queue);
+    public function setQueue(QueueInterface $queue) :void;
 }

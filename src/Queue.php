@@ -13,17 +13,17 @@ class Queue implements QueuePushInterface, QueueProcessInterface
     /**
      * @var string
      */
-    private $name;
+    private string $name;
 
     /**
      * @var QueueInterface
      */
-    private $queue;
+    private QueueInterface $queue;
 
     /**
      * @var Manager
      */
-    private $manager;
+    private Manager $manager;
 
     /**
      * Queue constructor.
@@ -42,9 +42,9 @@ class Queue implements QueuePushInterface, QueueProcessInterface
     /**
      * @inheritdoc
      */
-    public function push(PayloadInterface $payload, int $delay = 0): bool
+    public function push(PayloadInterface $job, int $delay = 0): bool
     {
-        $response = $this->queue->push(new Job($payload), $delay);
+        $response = $this->queue->push(new Job($job), $delay);
 
         if ($this->queue instanceof DummyAdapterInterface) {
             // instantly process dummy adapter jobs
@@ -57,7 +57,7 @@ class Queue implements QueuePushInterface, QueueProcessInterface
     /**
      * @inheritdoc
      */
-    public function process(int $maxAttempts = 1, int $maxMemory = 96, int $waitInterval = 5, int $maxJobs = 0)
+    public function process(int $maxAttempts = 1, int $maxMemory = 96, int $waitInterval = 5, int $maxJobs = 0): void
     {
         $this->manager->process($this->name, $maxAttempts, $maxMemory, $waitInterval, $maxJobs);
     }
@@ -65,7 +65,7 @@ class Queue implements QueuePushInterface, QueueProcessInterface
     /**
      * @inheritdoc
      */
-    public function processOne(int $maxAttempts = 1)
+    public function processOne(int $maxAttempts = 1): void
     {
         $this->manager->processOne($this->name, $maxAttempts);
     }

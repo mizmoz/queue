@@ -12,30 +12,26 @@ use SplQueue;
 class Queue implements QueueInterface
 {
     /**
-     * @var SplQueue
+     * @var SplQueue<JobInterface>
      */
-    private $queue;
+    private SplQueue $queue;
 
     /**
      * Queue constructor.
-     * @param SplQueue|null $queue
+     * @param SplQueue<JobInterface>|null $queue
      */
     public function __construct(SplQueue $queue = null)
     {
-        $this->queue = ($queue ? $queue : new SplQueue());
+        $this->queue = ($queue ?: new SplQueue());
     }
 
     /**
      * Get the queue
      *
-     * @return SplQueue
+     * @return SplQueue<JobInterface>
      */
     private function getQueue(): SplQueue
     {
-        if (! $this->queue) {
-            throw new QueueNotFoundException();
-        }
-
         return $this->queue;
     }
 

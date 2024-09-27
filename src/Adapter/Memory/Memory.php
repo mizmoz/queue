@@ -10,9 +10,9 @@ use Mizmoz\Queue\Exception\QueueNotFoundException;
 class Memory implements AdapterInterface
 {
     /**
-     * @var Queue[]
+     * @var QueueInterface[]
      */
-    protected $queues = [];
+    protected array $queues = [];
 
     /**
      * @inheritDoc

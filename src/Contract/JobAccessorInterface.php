@@ -7,14 +7,14 @@ interface JobAccessorInterface
     /**
      * Get the job
      *
-     * @return JobInterface
+     * @return JobInterface|null
      */
-    public function getJob(): JobInterface;
+    public function getJob(): ?JobInterface;
 
     /**
      * Set the job
      *
      * @param JobInterface $job
      */
-    public function setJob(JobInterface $job);
+    public function setJob(JobInterface $job): void;
 }

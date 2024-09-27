@@ -11,17 +11,17 @@ class Beanstalk implements AdapterInterface
     /**
      * @var PheanstalkInterface
      */
-    private $connection;
+    private PheanstalkInterface $connection;
 
     /**
      * @var QueueInterface[]
      */
-    private $queues = [];
+    private array $queues = [];
 
     /**
      * @var int
      */
-    private $ttr = 60;
+    private int $ttr;
 
     /**
      * Beanstalk constructor.

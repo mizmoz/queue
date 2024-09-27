@@ -7,17 +7,17 @@ interface QueueProcessInterface
     /**
      * Maximum attempts at a job
      */
-    const DEFAULT_MAX_ATTEMPTS = 1;
+    const int DEFAULT_MAX_ATTEMPTS = 1;
 
     /**
      * Amount of memory to use before restarting the process.
      */
-    const DEFAULT_MAX_MEMORY = 96;
+    const int DEFAULT_MAX_MEMORY = 96;
 
     /**
      * Number of seconds to wait between checking the queue for new jobs
      */
-    const DEFAULT_WAIT_INTERVAL = 5;
+    const int DEFAULT_WAIT_INTERVAL = 5;
 
     /**
      * Process the queue
@@ -32,12 +32,12 @@ interface QueueProcessInterface
         int $maxMemory = self::DEFAULT_MAX_MEMORY,
         int $waitInterval = self::DEFAULT_WAIT_INTERVAL,
         int $maxJobs = 0
-    );
+    ): void;
 
     /**
      * Process a single item in the queue using pop();
      *
      * @param int $maxAttempts
      */
-    public function processOne(int $maxAttempts = 1);
+    public function processOne(int $maxAttempts = 1): void;
 }

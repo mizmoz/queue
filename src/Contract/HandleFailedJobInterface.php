@@ -12,5 +12,5 @@ interface HandleFailedJobInterface
      *
      * @param JobException $exception
      */
-    public function handle(JobException $exception);
+    public function handle(JobException $exception): void;
 }

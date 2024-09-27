@@ -19,7 +19,7 @@ class Listen extends Command
     /**
      * @inheritdoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('queue:listen')
             ->setDescription('Listen and process jobs on the given queues')
@@ -54,10 +54,10 @@ class Listen extends Command
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // get the queue, if we can't resolve the queue this will fail
-        $queue = $this->getQueue($input, $output);
+        $this->getQueue($input, $output);
 
         $output->writeln('Starting listener for: ' . $input->getOption('queue'));
 
@@ -70,5 +70,6 @@ class Listen extends Command
         );
 
         $output->writeln('Done listening');
+        return 1;
     }
 }

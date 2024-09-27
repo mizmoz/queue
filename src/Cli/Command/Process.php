@@ -18,7 +18,7 @@ class Process extends Command
     /**
      * @inheritdoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('queue:process')
             ->setDescription('Process the given jobs in the queue.')
@@ -38,14 +38,14 @@ class Process extends Command
     /**
      * @inheritdoc
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // get the queue
         $queue = $this->getQueue($input, $output);
 
         $output->writeln('Processing queue: ' . $input->getOption('queue'));
 
-        // run until we exhuast the allowed memory
+        // run until we exhaust the allowed memory
         $queue->process(
             (int)$input->getOption('maxAttempts'),
             (int)$input->getOption('maxMemory'),
@@ -54,5 +54,6 @@ class Process extends Command
         );
 
         $output->writeln('Killing process');
+        return 1;
     }
 }

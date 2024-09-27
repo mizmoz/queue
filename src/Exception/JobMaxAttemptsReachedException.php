@@ -7,5 +7,5 @@ class JobMaxAttemptsReachedException extends JobException
     /**
      * @var bool
      */
-    protected $fatal = true;
+    protected bool $fatal = true;
 }

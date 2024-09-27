@@ -27,7 +27,7 @@ interface AdapterInterface
     /**
      * Get a list of the queues
      *
-     * @return array
+     * @return QueueInterface[]
      */
     public function get(): array;
 

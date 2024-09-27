@@ -11,7 +11,7 @@ class ProcessFactory
     /**
      * Create the process
      *
-     * @param array $arguments
+     * @param array<string, string|int> $arguments
      * @return Process
      */
     public static function process(array $arguments = []): Process
@@ -23,11 +23,7 @@ class ProcessFactory
      * Build the command
      *
      * @param string $command
-     * @param array $arguments
-     */
-    /**
-     * @param string $command
-     * @param array $arguments
+     * @param array<string, string|int> $arguments
      * @return Process
      */
     public static function build(string $command, array $arguments = []): Process

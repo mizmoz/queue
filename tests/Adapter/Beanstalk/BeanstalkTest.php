@@ -4,6 +4,7 @@ namespace Mizmoz\Queue\Tests\Adapter\Beanstalk;
 
 use Mizmoz\Container\Container;
 use Mizmoz\Queue\Adapter\Beanstalk\Beanstalk;
+use Mizmoz\Queue\Adapter\Beanstalk\Queue;
 use Mizmoz\Queue\Contract\AdapterInterface;
 use Mizmoz\Queue\Job;
 use Mizmoz\Queue\Processor;
@@ -19,19 +20,35 @@ class BeanstalkTest extends TestCase
         return new Beanstalk($pheanstalk);
     }
 
-    public function testInit()
+    public function testInit(): void
     {
         $beanstalk = $this->getBeanstalk();
         $this->assertInstanceOf(AdapterInterface::class, $beanstalk);
     }
 
-    public function testGetQueues()
+    public function testGetQueues(): void
     {
         $beanstalk = $this->getBeanstalk();
-        $this->assertArraySubset(['default'], $beanstalk->get());
+        $this->assertContains('default', $beanstalk->get());
     }
 
-    public function testCreateJobOnQueue()
+    public function testQueueCreationOnUsing(): void
+    {
+        $beanstalk = $this->getBeanstalk();
+        $this->assertInstanceOf(Queue::class, $beanstalk->using('test1'));
+        $this->assertInstanceOf(Queue::class, $beanstalk->using('test2'));
+        $this->assertInstanceOf(Queue::class, $beanstalk->using('test3'));
+    }
+
+    public function testQueueAlwaysExists(): void
+    {
+        $beanstalk = $this->getBeanstalk();
+        $this->assertTrue($beanstalk->exists('test101'));
+        $this->assertTrue($beanstalk->exists('test202'));
+        $this->assertTrue($beanstalk->exists('test303'));
+    }
+
+    public function testCreateJobOnQueue(): void
     {
         $beanstalk = $this->getBeanstalk();
 

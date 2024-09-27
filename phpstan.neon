@@ -1,0 +1,9 @@
+parameters:
+     level: 6
+     paths:
+       - src
+       - tests
+     phpVersion: 80300  # PHP 8.3
+     excludePaths:
+       - vendor
+       - src/Cli/AppRegistration.php

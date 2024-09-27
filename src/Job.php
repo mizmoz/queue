@@ -13,34 +13,34 @@ class Job implements Contract\JobInterface
     /**
      * @var string
      */
-    private $id;
+    private string $id;
 
     /**
-     * @var PayloadInterface
+     * @var PayloadInterface|null
      */
-    private $payload;
+    private mixed $payload;
 
     /**
      * @var bool
      */
-    private $compress = false;
+    private bool $compress = false;
 
     /**
      * @var int
      */
-    private $attempt = 0;
+    private int $attempt = 0;
 
     /**
      * Manage the attempts internally
      *
      * @var bool
      */
-    private $manageAttempts = true;
+    private bool $manageAttempts = true;
 
     /**
      * Job constructor.
      *
-     * @param PayloadInterface $payload
+     * @param PayloadInterface|null $payload
      */
     public function __construct(PayloadInterface $payload = null)
     {
@@ -69,9 +69,12 @@ class Job implements Contract\JobInterface
         }
 
         // inject the container and execute the payload
-        InjectContainer::inject($container, $this->getPayload())->execute();
+        $result = InjectContainer::inject($container, $this->getPayload())->execute();
 
-        return true;
+        // if the result is null, assume the job was successful as it could throw
+        // to indicate a failure, otherwise if there is a result then check it
+        // is true ish.
+        return is_null($result) || $result;
     }
 
     /**
@@ -141,6 +144,7 @@ class Job implements Contract\JobInterface
 
         foreach ($data as $key => $value) {
             $this->{$key} = ($key === 'payload' ? unserialize($value) : $value);
+
         }
 
         return true;

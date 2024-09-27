@@ -3,20 +3,55 @@
 namespace Mizmoz\Queue\Exception;
 
 use Mizmoz\Queue\Contract\JobAccessorInterface;
+use Mizmoz\Queue\Contract\JobInterface;
 use Mizmoz\Queue\Contract\QueueAccessorInterface;
+use Mizmoz\Queue\Contract\QueueInterface;
 use Mizmoz\Queue\Helper\JobAccessorTrait;
 use Mizmoz\Queue\Helper\QueueAccessorTrait;
 use RuntimeException;
 
 class JobException extends RuntimeException implements JobAccessorInterface, QueueAccessorInterface
 {
-    use JobAccessorTrait;
-    use QueueAccessorTrait;
-
     /**
      * @var bool
      */
-    protected $fatal = false;
+    protected bool $fatal = false;
+
+    /**
+     * @var JobInterface|null
+     */
+    private ?JobInterface $jobInstance;
+
+    /**
+     * @var QueueInterface|null
+     */
+    private ?QueueInterface $queueInstance;
+
+    /**
+     * @inheritdoc
+     */
+    public function getJob(): ?JobInterface
+    {
+        return $this->jobInstance;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getQueue(): ?QueueInterface
+    {
+        return $this->queueInstance;
+    }
+
+    /**
+     * Was the error fatal?
+     *
+     * @return bool
+     */
+    public function isFatal(): bool
+    {
+        return $this->fatal;
+    }
 
     /**
      * Is this exception fatal meaning the job cannot continue to be run and will not be re-queued?
@@ -31,12 +66,18 @@ class JobException extends RuntimeException implements JobAccessorInterface, Que
     }
 
     /**
-     * Was the error fatal?
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function isFatal(): bool
+    public function setJob(JobInterface $job): void
     {
-        return $this->fatal;
+        $this->jobInstance = $job;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setQueue(QueueInterface $queue): void
+    {
+        $this->queueInstance = $queue;
     }
 }

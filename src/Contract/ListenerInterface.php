@@ -20,5 +20,5 @@ interface ListenerInterface
         int $maxMemory = QueueProcessInterface::DEFAULT_MAX_MEMORY,
         int $waitInterval = QueueProcessInterface::DEFAULT_WAIT_INTERVAL,
         int $maxJobs = 0
-    );
+    ): void;
 }

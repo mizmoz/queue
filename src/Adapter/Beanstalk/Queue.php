@@ -15,17 +15,17 @@ class Queue implements QueueInterface
     /**
      * @var string
      */
-    private $name;
+    private string $name;
 
     /**
      * @var PheanstalkInterface
      */
-    private $connection;
+    private PheanstalkInterface $connection;
 
     /**
      * @var int
      */
-    private $ttr = 60;
+    private int $ttr;
 
     /**
      * Queue constructor.
@@ -52,7 +52,7 @@ class Queue implements QueueInterface
     private function getJob(PheanstalkJob $pheanstalkJob): JobInterface
     {
         $job = new Job();
-        $job->setId($pheanstalkJob->getId());
+        $job->setId((string)$pheanstalkJob->getId());
         $job->setMessage($pheanstalkJob->getData());
         $job->setAttempt((int)$this->getJobStats($job->getId())['releases']);
         return $job;
@@ -62,12 +62,11 @@ class Queue implements QueueInterface
      * Get the Job
      *
      * @param JobInterface $job
-     * @param bool $withMessage
      * @return PheanstalkJob
      */
-    private function getPheanstalkJob(JobInterface $job, bool $withMessage = false): PheanstalkJob
+    private function getPheanstalkJob(JobInterface $job): PheanstalkJob
     {
-        return new PheanstalkJob($job->getId(), ($withMessage ? $job->getMessage() : ''));
+        return new PheanstalkJob((int)$job->getId(), '');
     }
 
     /**
@@ -84,8 +83,7 @@ class Queue implements QueueInterface
      */
     public function fail(JobInterface $job): bool
     {
-        $this->connection->delete($this->getPheanstalkJob($job));
-        return true;
+        return $this->complete($job);
     }
 
     /**
@@ -97,7 +95,7 @@ class Queue implements QueueInterface
             ->putInTube($this->name, $job->getMessage(), PheanstalkInterface::DEFAULT_PRIORITY, $delay, $this->ttr);
 
         if ($id) {
-            $job->setId($id);
+            $job->setId((string)$id);
         }
 
         return (bool)$id;
@@ -123,6 +121,7 @@ class Queue implements QueueInterface
      */
     public function watch(int $waitInterval = 5): JobInterface
     {
+        /** @var PheanstalkJob $job */
         $job = $this->connection->watchOnly($this->name)->reserve($waitInterval);
 
         if (! $job) {
@@ -156,8 +155,12 @@ class Queue implements QueueInterface
      */
     public function delete(): bool
     {
-        while ($job = $this->pop()) {
-            $this->complete($job);
+        try {
+            while ($job = $this->pop()) {
+                $this->complete($job);
+            }
+        } catch (QueueIsEmptyException $e) {
+            // fall through to return true
         }
 
         return true;
@@ -180,6 +183,6 @@ class Queue implements QueueInterface
      */
     private function getJobStats(string $id): ArrayResponse
     {
-        return $this->connection->statsJob($id);
+        return $this->connection->statsJob((int)$id);
     }
 }

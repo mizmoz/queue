@@ -12,17 +12,17 @@ class Listener implements ListenerInterface
     /**
      * @var Process
      */
-    private $process;
+    private Process $process;
 
     /**
      * @var bool
      */
-    private $shutdown = false;
+    private bool $shutdown = false;
 
     /**
      * Register the signal handlers
      */
-    private function registerSigHandlers()
+    private function registerSigHandlers(): void
     {
         declare(ticks = 1);
 
@@ -48,7 +48,8 @@ class Listener implements ListenerInterface
         int $maxMemory = QueueProcessInterface::DEFAULT_MAX_MEMORY,
         int $waitInterval = QueueProcessInterface::DEFAULT_WAIT_INTERVAL,
         int $maxJobs = 0
-    ) {
+    ): void
+    {
         $this->process = ProcessFactory::process([
             'queue' => $queue,
             'maxAttempts' => $maxAttempts,
