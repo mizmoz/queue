@@ -3,7 +3,6 @@
 namespace Mizmoz\Queue\Cli\Command;
 
 use Mizmoz\Container\ManageContainerTrait;
-use Mizmoz\Queue\Contract\QueueProcessInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

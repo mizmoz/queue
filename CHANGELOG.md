@@ -1,3 +1,6 @@
+v1.0.1
+
+- Update symfony/console and symfony/process to v7.0
 
 v1.0.0
 

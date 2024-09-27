@@ -3,7 +3,7 @@
   "description": "Mizmoz Queue Library",
   "website": "https://www.mizmoz.com/",
   "type": "library",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "authors": [
     {
@@ -21,23 +21,24 @@
       "Mizmoz\\Queue\\Tests\\": "tests/"
     }
   },
+  "config": {
+    "sort-packages": true
+  },
   "require": {
     "php": ">=8.3",
     "ext-pcntl": "*",
     "mizmoz/container": "^2.0",
-    "symfony/process": "^3.3"
+    "symfony/console": "^7.0",
+    "symfony/process": "^7.0"
   },
   "require-dev": {
     "mockery/mockery": "^1.6",
     "pda/pheanstalk": "^3.1",
     "phpstan/phpstan": "^1.12",
-    "phpunit/phpunit": "^11.0",
-    "symfony/console": "^3.3"
+    "phpunit/phpunit": "^11.0"
   },
   "suggest": {
     "mizmoz/app": "Required for app registration",
-    "pda/pheanstalk": "Required when using Beanstalkd Queue",
-    "symfony/console": "Required for running the queue listener command",
-    "symfony/process": "Required for running the queue listener command"
+    "pda/pheanstalk": "Required when using Beanstalkd Queue"
   }
 }
