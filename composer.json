@@ -3,7 +3,7 @@
   "description": "Mizmoz Queue Library",
   "website": "https://www.mizmoz.com/",
   "type": "library",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "license": "MIT",
   "authors": [
     {
@@ -32,8 +32,9 @@
     "symfony/process": "^7.0"
   },
   "require-dev": {
+    "mizmoz/app": "^1.0",
     "mockery/mockery": "^1.6",
-    "pda/pheanstalk": "^3.1",
+    "pda/pheanstalk": "^5.0",
     "phpstan/phpstan": "^1.12",
     "phpunit/phpunit": "^11.0"
   },

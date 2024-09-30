@@ -6,7 +6,6 @@ use Mizmoz\App\Contract\AppCliRegistrationInterface;
 use Mizmoz\App\Contract\CliAppInterface;
 use Mizmoz\Config\Contract\ConfigInterface;
 use Mizmoz\Container\Contract\ContainerInterface;
-use Mizmoz\Queue\Cli\Command\Job;
 use Mizmoz\Queue\Cli\Command\Listen;
 use Mizmoz\Queue\Cli\Command\Process;
 use Mizmoz\Queue\Exception\QueueNotFoundException;
@@ -16,7 +15,7 @@ class AppRegistration implements AppCliRegistrationInterface
     /**
      * @inheritdoc
      */
-    public function registerCli(CliAppInterface $app, ContainerInterface $container, ConfigInterface $config)
+    public function registerCli(CliAppInterface $app, ContainerInterface $container, ConfigInterface $config): void
     {
         if (! $container->has('queue')) {
             // no queue has been set!

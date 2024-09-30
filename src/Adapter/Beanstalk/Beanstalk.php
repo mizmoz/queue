@@ -4,14 +4,15 @@ namespace Mizmoz\Queue\Adapter\Beanstalk;
 
 use Mizmoz\Queue\Contract\AdapterInterface;
 use Mizmoz\Queue\Contract\QueueInterface;
-use Pheanstalk\PheanstalkInterface;
+use Pheanstalk\Contract\PheanstalkPublisherInterface;
+use Pheanstalk\Pheanstalk;
 
 class Beanstalk implements AdapterInterface
 {
     /**
-     * @var PheanstalkInterface
+     * @var Pheanstalk
      */
-    private PheanstalkInterface $connection;
+    private Pheanstalk $connection;
 
     /**
      * @var QueueInterface[]
@@ -25,10 +26,10 @@ class Beanstalk implements AdapterInterface
 
     /**
      * Beanstalk constructor.
-     * @param PheanstalkInterface $pheanstalk
+     * @param Pheanstalk $pheanstalk
      * @param int $ttr Time to run job before it's released back on to the queue
      */
-    public function __construct(PheanstalkInterface $pheanstalk, int $ttr = PheanstalkInterface::DEFAULT_TTR) {
+    public function __construct(Pheanstalk $pheanstalk, int $ttr = PheanstalkPublisherInterface::DEFAULT_TTR) {
         $this->connection = $pheanstalk;
         $this->ttr = $ttr;
     }
@@ -72,7 +73,10 @@ class Beanstalk implements AdapterInterface
      */
     public function get(): array
     {
-        return $this->connection->listTubes();
+        foreach ($this->connection->listTubes() as $tube) {
+            $this->create($tube);
+        }
+        return $this->queues;
     }
 
     /**

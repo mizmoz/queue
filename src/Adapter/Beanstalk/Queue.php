@@ -6,21 +6,26 @@ use Mizmoz\Queue\Contract\JobInterface;
 use Mizmoz\Queue\Contract\QueueInterface;
 use Mizmoz\Queue\Exception\QueueIsEmptyException;
 use Mizmoz\Queue\Job;
-use Pheanstalk\Job as PheanstalkJob;
-use Pheanstalk\PheanstalkInterface;
-use Pheanstalk\Response\ArrayResponse;
+use Pheanstalk\Contract\JobIdInterface;
+use Pheanstalk\Contract\PheanstalkPublisherInterface;
+use Pheanstalk\Pheanstalk;
+use Pheanstalk\Values\Job as PheanstalkJob;
+use Pheanstalk\Values\JobId;
+use Pheanstalk\Values\JobStats;
+use Pheanstalk\Values\TubeName;
+use Pheanstalk\Values\TubeStats;
 
 class Queue implements QueueInterface
 {
     /**
-     * @var string
+     * @var TubeName $tubeName
      */
-    private string $name;
+    private TubeName $tubeName;
 
     /**
-     * @var PheanstalkInterface
+     * @var Pheanstalk
      */
-    private PheanstalkInterface $connection;
+    private Pheanstalk $connection;
 
     /**
      * @var int
@@ -30,17 +35,19 @@ class Queue implements QueueInterface
     /**
      * Queue constructor.
      * @param string $name
-     * @param PheanstalkInterface $pheanstalk
+     * @param Pheanstalk $pheanstalk
      * @param int $ttr Time to run job before it will be released back on to the queue
      */
     public function __construct(
         string $name,
-        PheanstalkInterface $pheanstalk,
-        int $ttr = PheanstalkInterface::DEFAULT_TTR
+        Pheanstalk $pheanstalk,
+        int $ttr = PheanstalkPublisherInterface::DEFAULT_TTR
     ) {
-        $this->name = $name;
+        $this->tubeName = new TubeName($name);
         $this->connection = $pheanstalk;
         $this->ttr = $ttr;
+
+        $this->connection->watch($this->tubeName);
     }
 
     /**
@@ -52,21 +59,10 @@ class Queue implements QueueInterface
     private function getJob(PheanstalkJob $pheanstalkJob): JobInterface
     {
         $job = new Job();
-        $job->setId((string)$pheanstalkJob->getId());
+        $job->setId($pheanstalkJob->getId());
         $job->setMessage($pheanstalkJob->getData());
-        $job->setAttempt((int)$this->getJobStats($job->getId())['releases']);
+        $job->setAttempt($this->getJobStats($pheanstalkJob)->releases);
         return $job;
-    }
-
-    /**
-     * Get the Job
-     *
-     * @param JobInterface $job
-     * @return PheanstalkJob
-     */
-    private function getPheanstalkJob(JobInterface $job): PheanstalkJob
-    {
-        return new PheanstalkJob((int)$job->getId(), '');
     }
 
     /**
@@ -74,7 +70,8 @@ class Queue implements QueueInterface
      */
     public function complete(JobInterface $job): bool
     {
-        $this->connection->delete($this->getPheanstalkJob($job));
+        $id = new JobId($job->getId());
+        $this->connection->delete($id);
         return true;
     }
 
@@ -91,11 +88,11 @@ class Queue implements QueueInterface
      */
     public function push(JobInterface $job, int $delay = 0): bool
     {
-        $id = $this->connection
-            ->putInTube($this->name, $job->getMessage(), PheanstalkInterface::DEFAULT_PRIORITY, $delay, $this->ttr);
+        $this->connection->useTube($this->tubeName);
+        $id = $this->connection->put($job->getMessage(), PheanstalkPublisherInterface::DEFAULT_PRIORITY, $delay, $this->ttr)->getId();
 
         if ($id) {
-            $job->setId((string)$id);
+            $job->setId($id);
         }
 
         return (bool)$id;
@@ -106,13 +103,7 @@ class Queue implements QueueInterface
      */
     public function pop(): JobInterface
     {
-        /** @var PheanstalkJob $response */
-        $response = $this->connection->reserveFromTube($this->name, 0);
-
-        if (! $response) {
-            throw new QueueIsEmptyException();
-        }
-
+        $response = $this->connection->reserve();
         return $this->getJob($response);
     }
 
@@ -121,13 +112,8 @@ class Queue implements QueueInterface
      */
     public function watch(int $waitInterval = 5): JobInterface
     {
-        /** @var PheanstalkJob $job */
-        $job = $this->connection->watchOnly($this->name)->reserve($waitInterval);
 
-        if (! $job) {
-            throw new QueueIsEmptyException();
-        }
-
+        $job = $this->connection->reserve();
         return $this->getJob($job);
     }
 
@@ -137,8 +123,8 @@ class Queue implements QueueInterface
     public function release(JobInterface $job): bool
     {
         // delete the job from the queue
-        $this->connection->release($this->getPheanstalkJob($job));
-
+        $id = new JobId($job->getId());
+        $this->connection->release($id);
         return true;
     }
 
@@ -147,7 +133,7 @@ class Queue implements QueueInterface
      */
     public function count(): int
     {
-        return (int)$this->getStats()['current-jobs-ready'];
+        return $this->getStats()->currentJobsReady;
     }
 
     /**
@@ -155,34 +141,30 @@ class Queue implements QueueInterface
      */
     public function delete(): bool
     {
-        try {
-            while ($job = $this->pop()) {
-                $this->complete($job);
-            }
-        } catch (QueueIsEmptyException $e) {
-            // fall through to return true
+        while ($this->count()) {
+             $this->complete($this->pop());
         }
-
         return true;
     }
 
     /**
      * Get the stats for the queue
      *
-     * @return ArrayResponse
+     * @return TubeStats
      */
-    private function getStats(): ArrayResponse
+    private function getStats(): TubeStats
     {
-        return $this->connection->statsTube($this->name);
+        return $this->connection->statsTube($this->tubeName);
     }
 
     /**
      * Get the stats for the job
      *
-     * @return ArrayResponse
+     * @param JobIdInterface $id
+     * @return JobStats
      */
-    private function getJobStats(string $id): ArrayResponse
+    private function getJobStats(JobIdInterface $id): JobStats
     {
-        return $this->connection->statsJob((int)$id);
+        return $this->connection->statsJob($id);
     }
 }

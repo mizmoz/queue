@@ -16,7 +16,7 @@ class BeanstalkTest extends TestCase
 {
     private function getBeanstalk(): Beanstalk
     {
-        $pheanstalk = new Pheanstalk('dev.mizmoz.com');
+        $pheanstalk = Pheanstalk::create('dev.mizmoz.com');
         return new Beanstalk($pheanstalk);
     }
 
@@ -29,7 +29,7 @@ class BeanstalkTest extends TestCase
     public function testGetQueues(): void
     {
         $beanstalk = $this->getBeanstalk();
-        $this->assertContains('default', $beanstalk->get());
+        $this->assertArrayHasKey('default', $beanstalk->get());
     }
 
     public function testQueueCreationOnUsing(): void
@@ -51,6 +51,7 @@ class BeanstalkTest extends TestCase
     public function testCreateJobOnQueue(): void
     {
         $beanstalk = $this->getBeanstalk();
+        $beanstalk->using('test')->delete();
 
         $job = new Job(new TestPayload(123));
 

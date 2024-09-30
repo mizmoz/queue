@@ -22,7 +22,7 @@ class QueueTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $pheanstalk = new Pheanstalk('dev.mizmoz.com');
+        $pheanstalk = Pheanstalk::create('dev.mizmoz.com');
         $this->queue = new Queue("mizmoz-queue-test", $pheanstalk);
         $this->queue->delete();
     }

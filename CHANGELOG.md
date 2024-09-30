@@ -1,3 +1,8 @@
+v1.1.0
+
+- Update to Pheanstalk v5
+- Fix issues in AppRegistration
+
 v1.0.1
 
 - Update symfony/console and symfony/process to v7.0
